@@ -1,36 +1,14 @@
-language: python
-os: linux
-dist: bionic
-
-jobs:
-  - name: test
-    env:
-      - DOCKER_COMPOSE_VERSION=1.28.2
-
-    before_install:
-      - sudo rm /usr/local/bin/docker-compose
-      - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname
-        -s`-`uname -m` > docker-compose
-      - chmod +x docker-compose
-      - sudo mv docker-compose /usr/local/bin
-      
-      - heroku auth:token
-      - heroku container:login
-      - docker pull registry.heroku.com/swe-app-neo/web || true
-      - docker pull registry.heroku.com/swe-app-neo-staging/web || true
-      - docker-compose build
-
-    script:
-      - docker-compose up -d db
-      - docker-compose up migration
-      - docker-compose run test
-
-    deploy:
-      - provider: script
-        script: bash scripts/deploy.sh production
-        on:
-          branch: main
-      - provider: script
-        script: bash scripts/deploy.sh staging
-        on:
-          all_branches: true
+language: python # => 1
+    python: # => 2
+      - "2.6"
+      - "2.7"
+    services: # => 3
+      - mysql
+    env: # => 4
+      -DJANGO=1.8 DB=mysql
+    install: # => 5
+      - pip install -r requirements.txt
+    before_script: # => 6
+      - mysql -e 'create database test;' -u root
+    script: # => 7
+      - python manage.py test
