@@ -1,2 +1,9 @@
 gunicorn
 django-heroku
+flake8
+python-coveralls
+coverage
+nose
+pytest
+tox
+black
