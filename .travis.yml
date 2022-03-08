@@ -6,6 +6,7 @@ install:
 before_script:
     # run black to check if some files would need reformatting
     - black --check . || true
+    - pytest --flake8
 script:
     - python manage.py test
 deploy:
